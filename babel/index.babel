@@ -1,0 +1,339 @@
+class App extends React.Component {
+ constructor(props) {
+    super(props);
+    this.state = {
+      currentValue: [],
+      previousValue: [],
+      allPressedButtons: [],
+      ourFirstNumber: [],
+    
+    };
+  }
+
+  handleClick = e => {
+    var ourNumber = [...this.state.allPressedButtons];
+    var ourFirstNumber = [...this.state.currentValue];
+    var lastIndexOfOperatorPlus = ourNumber.lastIndexOf("+");
+    var lastIndexOfOperatorMinus = ourNumber.lastIndexOf("-");
+    var lastIndexOfOperatorMal = ourNumber.lastIndexOf("*");
+    var lastIndexOfOperatorDiv = ourNumber.lastIndexOf("/");
+
+    var highestNumber = [
+      lastIndexOfOperatorDiv,
+      lastIndexOfOperatorMal,
+      lastIndexOfOperatorMinus,
+      lastIndexOfOperatorPlus
+    ].sort((a, b) => a - b);
+    console.log(/[\+\/\*\-]/ in ourNumber);
+
+    if (e.target.value === ".") {
+      if (!ourNumber.join("").match(/[\+\/\*\-]/)) {
+        if (!ourNumber.includes(".")) {
+          ourNumber.push(String(e.target.value));
+        }
+      } else if (ourNumber.join("").match(/[\+\/\*\-]/)) {
+        var ourNumberSlice = ourNumber.slice(highestNumber[3]).join("");
+        if (!ourNumberSlice.includes(".")) {
+          ourNumber.push(String(e.target.value));
+        }
+      }
+    } else if (e.target.value !== "." || e.target.value !== "0") {
+      ourNumber.push(String(e.target.value));
+    }
+
+    for (let x = 0; x < ourNumber.length; x++) {
+      while (ourNumber[0] === "0" && ourNumber[1] === "0") {
+        ourNumber.shift();
+      }
+    }
+
+    for (let x = 0; x < ourFirstNumber.length; x++) {
+      while (ourFirstNumber[0] === "0" && ourFirstNumber[1] === "0") {
+        ourFirstNumber.shift();
+      }
+    }
+
+    for (let x = 0; x < ourNumber.length; x++) {
+      if (
+        isNaN(ourNumber[x]) &&
+        ourNumber[x + 1] === "0" &&
+        ourNumber[x + 2] === "0"
+      ) {
+        ourNumber.splice(x + 1, 1);
+      }
+    }
+
+    for (let x = 0; x < ourFirstNumber.length; x++) {
+      if (
+        isNaN(ourFirstNumber[x]) &&
+        ourFirstNumber[x + 1] === "0" &&
+        ourFirstNumber[x + 2] === "0"
+      ) {
+        ourFirstNumber.splice(x + 1, 1);
+      }
+    }
+ 
+    for (let x = 0; x < ourNumber.length; x++) {
+      if (ourNumber[x] === "." && ourNumber[x + 1] === ".") {
+        ourNumber.splice(x + 1, 1);
+      }
+    }
+
+    for (let x = 0; x < ourFirstNumber.length; x++) {
+      if (ourFirstNumber[x] === "." && ourFirstNumber[x + 1] === ".") {
+        ourFirstNumber.splice(x + 1, 1);
+      }
+    }
+
+    this.setState({
+      currentValue: ourFirstNumber.join(""),
+      allPressedButtons: ourNumber.join("")
+    });
+  };
+  handleReset = e =>
+    this.setState({
+      currentValue: [],
+      previousValue: 0,
+      allPressedButtons: 0,
+      result: 0
+    });
+
+  handleMath = e => {
+    let ourNumber = [...this.state.allPressedButtons];
+    if (!isNaN(ourNumber[ourNumber.length - 1])) {
+      ourNumber.push(String(e.target.value));
+    } else {
+      ourNumber[ourNumber.length - 1] = String(e.target.value);
+    }
+
+    this.setState({
+      allPressedButtons: ourNumber.join("")
+    });
+  };
+
+  handleResult = () => {
+    const allPressedButtonsWithResultOnly = [];
+    console.log(typeof this.state.allPressedButtons[0]);
+    var myResult = eval(this.state.allPressedButtons);
+    allPressedButtonsWithResultOnly.push(String(myResult));
+    this.setState({
+      allPressedButtons: [],
+      allPressedButtons: allPressedButtonsWithResultOnly
+    });
+  };
+
+  render() {
+    return (
+      <div id='box' className="container">
+        <div className="row justify-content-center">
+        <div className=" calcBox border border-dark justify-content-center">
+          <div className="col-md">
+            <h4 className="text-center">Javascript Calculator</h4>
+          </div>
+          <div className="row justify-content-center">
+            <div className="col-md">
+            <form name="calc">
+              <input
+                type="text"
+                id="display"
+                className="screen "
+                name="result"
+                value={this.state.allPressedButtons}
+                readOnly
+              />
+            </form>
+            </div>
+          </div>
+
+          <div className="row justify-content-center">
+            <div className="col-md">
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="7"
+              key="7"
+              id="seven"
+            >
+              7
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="8"
+              key="8"
+              id="eight"
+            >
+              8
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="9"
+              key="9"
+              id="nine"
+            >
+              9
+            </button>
+            <button
+              onClick={this.handleMath}
+              className="btn btn-info"
+              value="*"
+              key="X"
+              id="multiply"
+            >
+              x
+            </button>
+          </div>
+          </div>
+
+          <div className="row justify-content-center">
+            <div className="col-md">
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="4"
+              key="4"
+              id="four"
+            >
+              4
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="5"
+              key="5"
+              id="five"
+            >
+              5
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="6"
+              key="6"
+              id="six"
+            >
+              6
+            </button>
+            <button
+              onClick={this.handleMath}
+              className="btn btn-info"
+              value="-"
+              key="minus"
+              id="subtract"
+            >
+              -
+            </button>
+          </div>
+          </div>
+
+          <div className="row justify-content-center">
+            <div className="col-md">
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="1"
+              key="1"
+              id="one"
+            >
+              1
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="2"
+              key="2"
+              id="two"
+            >
+              2
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="3"
+              key="3"
+              id="three"
+            >
+              3
+            </button>
+            <button
+              onClick={this.handleMath}
+              className="btn btn-info"
+              value="+"
+              key="plus"
+              id="add"
+            >
+              +
+            </button>
+          </div>
+          </div>
+          <div className="row justify-content-center">
+            <div className='col-md'>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="0"
+              key="0"
+              id="zero"
+            >
+              0
+            </button>
+            <button
+              onClick={this.handleClick}
+              className="btn btn-info"
+              value="."
+              key="decimal"
+              id="decimal"
+            >
+              .
+            </button>
+            <button
+              onClick={this.handleResult}
+              className="btn btn-success"
+              value="="
+              key="equals"
+              id="equals"
+            >
+              =
+            </button>
+            <button
+              onClick={this.handleMath}
+              className="btn btn-info"
+              value="/"
+              key="/"
+              id="divide"
+            >
+              /
+            </button>
+          </div>
+          </div>
+          <div className="row justify-content-center ">
+            <div className="col-md">
+            <button
+              onClick={this.handleReset}
+              className="btn btn-danger"
+              value="clear"
+              key="clear"
+              id="clear"
+            >
+              AC
+            </button>
+            </div>
+          </div>
+        </div>
+        
+          <div className="row">
+            <div className="col-md">
+              <footer>
+        <p className="text-center">Written by <a href="https://github.com/londonjob" target="_blank">londonjob</a></p>
+        </footer>
+          </div>
+          </div>
+          </div>
+        </div>
+    );
+  }
+
+}
+
+ReactDOM.render(<App />, document.getElementById("root") );
